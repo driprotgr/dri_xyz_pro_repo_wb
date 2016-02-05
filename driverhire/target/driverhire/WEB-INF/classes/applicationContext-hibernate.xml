@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		To change this license header, choose License Headers in Project
+		Properties. To change this template file, choose Tools | Templates and
+		open the template in the editor.
+	-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+	xmlns:context="http://www.springframework.org/schema/context">
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="locations">
+    		<list>
+    			<value>classpath:application.properties</value>
+    		</list>
+    	</property>
+	</bean>
+
+	<!-- Database connection settings -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="url" value="${db.url}" />
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
+	</bean>
+	
+
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+			<value>com.driverhire.model</value>
+		</property>
+	</bean>
+
+	<!--
+		To make methods transactional adding @transactional tag on impl
+		methods. Handles session to current thread.
+	-->
+	<tx:annotation-driven />
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<context:component-scan base-package="com.driverhire.dao" />
+</beans>
