@@ -29,7 +29,9 @@ public class UserService {
 		logger.info("inside UserService.login");
 		
 		User user = userDao.getUserByMobileNo(mobileNo);
-		
+		if(user == null) {
+			throw new DriverHireException("802", "Account does not exist");
+		}
 		if(user.getPassword().equals(password))
 		{
 			UserDto userDto = modelToDTO(user);

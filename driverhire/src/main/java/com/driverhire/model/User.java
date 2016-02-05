@@ -13,14 +13,17 @@ import javax.persistence.Id;
 @Table(name = "USER")
 public class User {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "USER_ID", unique = true, nullable = false)
+	private Long userId;	
 	@Column(name = "USER_NAME")
 	private String userName;
 	@Column(name = "USER_EMAIL")
 	private String userEmail;
 	@Column(name = "USER_CATEGORY")
 	private String userCategory;
-	@Column(name = "USER_ID")
-	private Long userId;
+
 	@Column(name = "USER_MOBILE")
 	private String userMobile;
 	@Column(name = "USER_PASSWORD")
@@ -57,9 +60,7 @@ public class User {
 		this.userCategory = userCategory;
 	}
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id", unique = true, nullable = false)
+	
 	public Long getUserId() {
 		return userId;
 	}

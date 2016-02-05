@@ -2,9 +2,11 @@ package com.driverhire.dao.impl;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import com.driverhire.controller.mobile.UserController;
 import com.driverhire.dao.UserDao;
 import com.driverhire.dto.UserDto;
 import com.driverhire.model.User;
@@ -12,7 +14,8 @@ import com.driverhire.model.User;
 @Repository
 public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
-
+	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+	
 	public User createUser(UserDto userDto) {
 		User user = new User();
 		user.setAccountId(userDto.getAccountId());
@@ -32,13 +35,15 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 
 	public User getUserByMobileNo(String mobileNo) {
-		User user = (User) getSession().createCriteria(User.class)
-		.add(Restrictions.and(Restrictions.eq("USER_MOBILE", mobileNo)));
-
-		/*CrewMaster crewMaster = (CrewMaster) getSession().createCriteria(CrewMaster.class).add(Restrictions.and(
-                    Restrictions.eq("userName", crewMasterDTO.getUserName()),
-                    Restrictions.eq("password", crewMasterDTO.getPassword()))).uniqueResult();
-        */
+		User user;
+		try {
+			user = (User) getSession().createCriteria(User.class)
+		        .add(Restrictions.and(Restrictions.eq("userMobile", mobileNo))).list().get(0);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return null;
+		}
 		return user;
 	}
 }
