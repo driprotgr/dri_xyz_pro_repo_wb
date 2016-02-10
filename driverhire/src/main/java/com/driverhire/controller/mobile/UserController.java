@@ -55,7 +55,7 @@ private static final Logger logger = Logger.getLogger(UserController.class);
 			UserDto userDto= userService.logIn(json.getUser_mobile(), json.getUser_password(), json.getGcm_identifier_id());
 			response.setResponseCode(200);
 			response.setResponseBody(userDto);
-			response.setOthToken("sdsd");
+			response.setOthToken(userDto.getAuthToken());
 			
 		} catch (DriverHireException e) {
 			

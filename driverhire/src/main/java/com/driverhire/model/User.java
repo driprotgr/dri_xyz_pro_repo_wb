@@ -1,58 +1,58 @@
 package com.driverhire.model;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
+
+
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 @Table(name = "USER")
 public class User {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "USER_ID", unique = true, nullable = false)
-	private Long userId;	
-	@Column(name = "USER_NAME")
+	private Long userId;
 	private String userName;
-	@Column(name = "USER_EMAIL")
 	private String userEmail;
-	@Column(name = "USER_CATEGORY")
 	private String userCategory;
-
-	@Column(name = "USER_MOBILE")
 	private String userMobile;
-	@Column(name = "USER_PASSWORD")
 	private String password;
-	@Column(name = "USER_ACCOUNT_TYPE")
 	private char accountType;
-	@Column(name = "USER_ACCOUNT_ID")
 	private String accountId;
-	@Column(name = "CREATED_DATE")
 	private Date createdDate; 
-	@Column(name = "USER_ACT_FLAG")
 	private char actFlag;
-	@Column(name = "OTP")
 	private String otp;
-	@Column(name = "OTP_EXPIRY_DATE")
 	private Date otpExpiryDate;
 	
+	private List<UserSession> userSessions;
+	
+	
+	@Column(name = "USER_NAME")
 	public String getUserName() {
 		return userName;
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
+	@Column(name = "USER_EMAIL")
 	public String getUserEmail() {
 		return userEmail;
 	}
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
+	
+	@Column(name = "USER_CATEGORY")
 	public String getUserCategory() {
 		return userCategory;
 	}
@@ -60,55 +60,73 @@ public class User {
 		this.userCategory = userCategory;
 	}
 	
-	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "USER_ID", unique = true, nullable = false)	
 	public Long getUserId() {
 		return userId;
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+	
+	@Column(name = "USER_MOBILE")
 	public String getUserMobile() {
 		return userMobile;
 	}
 	public void setUserMobile(String userMobile) {
 		this.userMobile = userMobile;
 	}
+	
+	@Column(name = "USER_PASSWORD")
 	public String getPassword() {
 		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	@Column(name = "USER_ACCOUNT_TYPE")
 	public char getAccountType() {
 		return accountType;
 	}
 	public void setAccountType(char accountType) {
 		this.accountType = accountType;
 	}
+	
+	@Column(name = "USER_ACCOUNT_ID")
 	public String getAccountId() {
 		return accountId;
 	}
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
+	
+	@Column(name = "CREATED_DATE")
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+	
+	@Column(name = "USER_ACT_FLAG")
 	public char getActFlag() {
 		return actFlag;
 	}
 	public void setActFlag(char actFlag) {
 		this.actFlag = actFlag;
 	}
+	
+	@Column(name = "OTP")
 	public String getOtp() {
 		return otp;
 	}
 	public void setOtp(String otp) {
 		this.otp = otp;
 	}
+	
+	@Column(name = "OTP_EXPIRY_DATE")
 	public Date getOtpExpiryDate() {
 		return otpExpiryDate;
 	}
@@ -116,4 +134,11 @@ public class User {
 		this.otpExpiryDate = otpExpiryDate;
 	}
 	
+	@OneToMany(targetEntity = UserSession.class, mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	public List<UserSession> getUserSession() {
+		return userSessions;
+	}
+	public void setUserSession(List<UserSession> userSessions) {
+		this.userSessions = userSessions;
+	}
 }

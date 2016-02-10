@@ -4,12 +4,14 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.omg.CORBA.UserException;
 import org.springframework.stereotype.Repository;
 
 import com.driverhire.controller.mobile.UserController;
 import com.driverhire.dao.UserDao;
 import com.driverhire.dto.UserDto;
 import com.driverhire.model.User;
+import com.driverhire.model.UserSession;
 
 @Repository
 public class UserDaoImpl extends BaseDaoImpl implements UserDao {
@@ -45,5 +47,23 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 			return null;
 		}
 		return user;
+	}
+	
+	public UserSession saveUserSession (UserSession userSession) {
+		saveOrUpdateObject(userSession);
+		return userSession;
+	}
+
+
+
+	public UserSession getSessionssionByAuthTok(String authToken) {
+		UserSession userSession = null;
+		try {
+			userSession = (UserSession) getSession().createCriteria(UserSession.class)
+				.add(Restrictions.and(Restrictions.eq("authId", authToken))).list().get(0);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return userSession;
 	}
 }

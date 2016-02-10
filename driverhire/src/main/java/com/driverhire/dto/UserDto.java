@@ -13,10 +13,16 @@ public class UserDto {
 	private String accountId; 
 	private char actFlag;
 	private String otp;
-	
+	private String authToken;
 	
 	public String getOtp() {
 		return otp;
+	}
+	public String getAuthToken() {
+		return authToken;
+	}
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
 	}
 	public void setOtp(String otp) {
 		this.otp = otp;
