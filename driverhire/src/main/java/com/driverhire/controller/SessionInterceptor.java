@@ -1,9 +1,5 @@
 package com.driverhire.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,9 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.driverhire.controller.mobile.UserController;
-import com.driverhire.dao.UserDao;
 import com.driverhire.dto.JsonResponse;
-import com.driverhire.model.UserSession;
 import com.driverhire.service.UserService;
 
 
@@ -42,9 +36,11 @@ public class SessionInterceptor implements HandlerInterceptor{
 		String uri = servletRequest.getRequestURI();
 		logger.info("uri " + uri);
 		
-		/*if("/driverhire/mobile/login".equals(uri))
+		if("/driverhire/mobile/login".equals(uri) || "/driverhire/mobile/login1".equals(uri) 
+			|| "/driverhire/mobile/signup".equals(uri) || "/driverhire/mobile/confirmotp".equals(uri))
 			return true;
-		*/
+		
+		
 		/*Enumeration e = servletRequest.getParameterNames();
 		
 		while (e.hasMoreElements()){
@@ -75,7 +71,8 @@ public class SessionInterceptor implements HandlerInterceptor{
 		if(! isAuthValid) {
 			JsonResponse jsonResponse = new JsonResponse();
 			jsonResponse.setResponseCode(701);
-			jsonResponse.setResponseBody("Invalid Session");
+			//jsonResponse.setResponseBody("Invalid Session");
+			jsonResponse.setResponseMessage("Invalid Session");
 			logger.info(jsonResponse.toString());
 			servletResponse.setContentType("application/json");
 			servletResponse.getWriter().write(jsonResponse.toString());

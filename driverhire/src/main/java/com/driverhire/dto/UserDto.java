@@ -3,59 +3,48 @@ package com.driverhire.dto;
 import java.util.Date;
 
 public class UserDto {
-	private String userName;
-	private String userEmail;
-	private String userCategory;
-	private Long userId;
-	private String userMobile;
+	private String name;
+	private String email;
+	private String category;
+	private long id;
+	private String mobile;
 	private String password;
 	private char accountType;
 	private String accountId; 
-	private char actFlag;
+	private boolean actFlag;
 	private String otp;
 	private String authToken;
-	
-	public String getOtp() {
-		return otp;
+	private String gcmIdentifierId;
+	private String deviceId;
+	public String getName() {
+		return name;
 	}
-	public String getAuthToken() {
-		return authToken;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public void setAuthToken(String authToken) {
-		this.authToken = authToken;
+	public String getEmail() {
+		return email;
 	}
-	public void setOtp(String otp) {
-		this.otp = otp;
+	public void setEmail(String email) {
+		this.email = email;
 	}
-	public String getUserName() {
-		return userName;
+	public String getCategory() {
+		return category;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setCategory(String category) {
+		this.category = category;
 	}
-	public String getUserEmail() {
-		return userEmail;
+	public long getId() {
+		return id;
 	}
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setId(long id) {
+		this.id = id;
 	}
-	public String getUserCategory() {
-		return userCategory;
+	public String getMobile() {
+		return mobile;
 	}
-	public void setUserCategory(String userCategory) {
-		this.userCategory = userCategory;
-	}
-	public Long getUserId() {
-		return userId;
-	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-	public String getUserMobile() {
-		return userMobile;
-	}
-	public void setUserMobile(String userMobile) {
-		this.userMobile = userMobile;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 	public String getPassword() {
 		return password;
@@ -75,12 +64,36 @@ public class UserDto {
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
-	public char getActFlag() {
+	public boolean isActFlag() {
 		return actFlag;
 	}
-	public void setActFlag(char actFlag) {
+	public void setActFlag(boolean actFlag) {
 		this.actFlag = actFlag;
-	} 	
+	}
+	public String getOtp() {
+		return otp;
+	}
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+	public String getAuthToken() {
+		return authToken;
+	}
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
+	}
+	public String getGcmIdentifierId() {
+		return gcmIdentifierId;
+	}
+	public void setGcmIdentifierId(String gcmIdentifierId) {
+		this.gcmIdentifierId = gcmIdentifierId;
+	}
+	public String getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
 	
 	
 }

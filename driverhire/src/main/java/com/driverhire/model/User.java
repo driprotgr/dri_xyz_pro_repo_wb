@@ -5,14 +5,13 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
-
-
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -28,7 +27,10 @@ public class User {
 	private String password;
 	private char accountType;
 	private String accountId;
+	
+	@Temporal (TemporalType.TIMESTAMP)
 	private Date createdDate; 
+	
 	private char actFlag;
 	private String otp;
 	private Date otpExpiryDate;
@@ -44,7 +46,7 @@ public class User {
 		this.userName = userName;
 	}
 	
-	@Column(name = "USER_EMAIL")
+	@Column(name = "USER_EMAIL", unique = true)
 	public String getUserEmail() {
 		return userEmail;
 	}

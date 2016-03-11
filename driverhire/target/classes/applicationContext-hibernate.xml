@@ -27,6 +27,7 @@
 		<property name="driverClassName" value="${db.driver}" />
 		<property name="username" value="${db.username}" />
 		<property name="password" value="${db.password}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}" /> 
 	</bean>
 	
 

@@ -20,4 +20,21 @@ public class Token {
 		logger.info("generatedToken :" + s.toString());
 		return s.toString();
 	}
+	
+	public static String generateIntToken(int length) {
+		
+		logger.info("inside generateToken");
+		char cons[] = {'0','1','2','3','4','5','6','7','8','9'};
+		Random randomGenerator = new Random();
+		StringBuffer s = new StringBuffer();
+		System.out.println("cons length :" + cons.length);
+		for(int i=0; i< length; i++) {
+		 int randomInt = randomGenerator.nextInt(10);
+		  s.append(cons[randomInt]);
+		}
+		logger.info("generatedToken :" + s.toString());
+	//	return s.toString();
+	// for time being sending fixed otp
+		return "123456";
+	}
 }

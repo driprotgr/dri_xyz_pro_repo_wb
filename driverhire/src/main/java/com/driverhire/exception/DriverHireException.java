@@ -2,10 +2,10 @@ package com.driverhire.exception;
 
 public class DriverHireException extends Exception {
 	
-	private String errCode;
+	private int errCode;
 	private String errMsg;
 	
-	public DriverHireException(String code, String message) {
+	public DriverHireException(int code, String message) {
 		super(message);
 		errMsg = message;
 		errCode = code;
@@ -18,10 +18,10 @@ public class DriverHireException extends Exception {
 		errMsg = message;
 	}
 
-	public String getErrCode() {
+	public int getErrCode() {
 		return errCode;
 	}
-	public void setErrCode(String errCode) {
+	public void setErrCode(int errCode) {
 		this.errCode = errCode;
 	}
 	public String getErrMsg() {

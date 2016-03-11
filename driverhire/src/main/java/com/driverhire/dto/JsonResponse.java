@@ -3,7 +3,8 @@ package com.driverhire.dto;
 public class JsonResponse {
 	private int responseCode;
 	private Object responseBody;
-	private String othToken;
+	private String responseMessage;
+	private String authToken;
 	
 	public int getResponseCode() {
 		return responseCode;
@@ -17,13 +18,18 @@ public class JsonResponse {
 	public void setResponseBody(Object responseBody) {
 		this.responseBody = responseBody;
 	}
-	public String getOthToken() {
-		return othToken;
+	public String getResponseMessage() {
+		return responseMessage;
 	}
-	public void setOthToken(String othToken) {
-		this.othToken = othToken;
+	public void setResponseMessage(String responseMessage) {
+		this.responseMessage = responseMessage;
 	}
-	
+	public String getAuthToken() {
+		return authToken;
+	}
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
+	}
 	public String toString() {
 		
 		StringBuilder builder = new StringBuilder();
@@ -31,10 +37,12 @@ public class JsonResponse {
 		builder.append(getResponseCode());
 		builder.append("\", \"responseBody\": \"");
 		builder.append(getResponseBody());
-		builder.append("\", \"othToken\": \"");
-		builder.append(getOthToken());
+		builder.append("\", \"authToken\": \"");
+		builder.append(getAuthToken());
 		builder.append("\"}");
-		
+		builder.append("\", \"responseMessage\": \"");
+		builder.append(getResponseMessage());
+		builder.append("\"}");
 		/*{   "responseCode": 200,
 			   "responseBody":    {
 			      "userName": "giri",
