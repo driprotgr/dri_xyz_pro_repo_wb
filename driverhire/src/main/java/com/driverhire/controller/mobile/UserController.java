@@ -106,20 +106,17 @@ private static final Logger logger = Logger.getLogger(UserController.class);
 			response.setResponseBody(e.getCause());
 			response.setResponseMessage(e.getMessage());
 		}catch (DataIntegrityViolationException e) {
-			e.printStackTrace();
 			response = new JsonResponse();
 			response.setResponseCode(700);
 			response.setResponseBody(e.getCause());
 			response.setResponseMessage("DB Constrainnt Violated");
 		} catch (ConstraintViolationException e) {
 			response = new JsonResponse();
-			e.printStackTrace();
 			response.setResponseCode(700);
 			response.setResponseBody(e.getCause());
 			response.setResponseMessage("DB Constrainnt Violated");
 		} 
 		catch (Exception e) {
-			e.printStackTrace();
 			response = new JsonResponse();
 			response.setResponseCode(700);
 			response.setResponseBody(e.getMessage());
@@ -150,7 +147,6 @@ private static final Logger logger = Logger.getLogger(UserController.class);
 				response.setResponseCode(700);
 				response.setResponseBody(e.getMessage());
 				response.setResponseMessage(e.getMessage());
-				e.printStackTrace();
 			}
 			return response;
 	    }

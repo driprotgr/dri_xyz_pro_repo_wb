@@ -1,5 +1,7 @@
 package com.driverhire.dto;
 
+import java.util.Date;
+
 public class UserDto {
 	private String name;
 	private String email;
@@ -14,36 +16,6 @@ public class UserDto {
 	private String authToken;
 	private String gcmIdentifierId;
 	private String deviceId;
-	
-	public String toString() {
-		StringBuilder s = new StringBuilder();
-		s.append("Name :" + name);
-		s.append('\n');
-		s.append("Email :" + email);
-		s.append('\n');
-		s.append("Category :" + category);
-		s.append('\n');
-		s.append("Id :" + id);
-		s.append('\n');
-		s.append("mobile :" + mobile);
-		s.append('\n');
-		s.append("accountType :" + accountType);
-		s.append('\n');
-		s.append("accountId :" + accountId);
-		s.append('\n');
-		s.append("actFlag :" + actFlag);
-		s.append('\n');
-		s.append("otp :" + otp);
-		s.append('\n');
-		s.append("authToken :" + authToken);
-		s.append('\n');
-		s.append("gcmIdentifierId :" + gcmIdentifierId);
-		s.append('\n');
-		s.append("deviceId :" + deviceId);
-		s.append('\n');
-		return s.toString();
-	}
-	
 	public String getName() {
 		return name;
 	}
@@ -122,7 +94,6 @@ public class UserDto {
 	public void setDeviceId(String deviceId) {
 		this.deviceId = deviceId;
 	}
-	
 	
 	
 }

@@ -63,7 +63,7 @@ public class User {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "USER_ID", unique = true, nullable = false)	
 	public Long getUserId() {
 		return userId;

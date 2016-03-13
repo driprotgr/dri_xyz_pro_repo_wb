@@ -1,5 +1,8 @@
 package com.driverhire.dao.impl;
 
+import java.util.Date;
+
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 
 import com.driverhire.dao.UserDao;
+import com.driverhire.dto.UserDto;
 import com.driverhire.model.User;
 import com.driverhire.model.UserSession;
 
@@ -15,20 +19,32 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
 	
+	public User createOrUpdateUser(UserDto userDto){
+		User user = new User();
+		user.setAccountId(userDto.getAccountId());
+		user.setAccountType(userDto.getAccountType());
+		
+		if (userDto.isActFlag())
+			user.setActFlag('Y');
+		else 
+			user.setActFlag('N');
+		user.setCreatedDate(new Date());
+		user.setOtp(userDto.getOtp());
+		user.setOtpExpiryDate(new Date());
+		user.setPassword(user.getPassword());
+		if (userDto.getCategory() == null || "".equals(userDto.getCategory())) 
+			userDto.setCategory("G");
+		user.setUserCategory(userDto.getCategory());
+		user.setUserEmail(userDto.getEmail());
+		user.setUserMobile(userDto.getMobile());
+		user.setUserName(userDto.getName());
+		saveOrUpdateObject(user);
+		return user;
+	}
 
-	
 	public User createOrUpdateUser(User user){
 		saveOrUpdateObject(user);
 		return user;	
-	}
-	public User updateUser(User user){
-		updateObject(user);
-		return user;	
-	}
-	public boolean deleteUser(User user) {
-		getSession().delete(user);
-//		getSession().flush();
-		return true;
 	}
 	public User getUserByMobileNo(String mobileNo) {
 		User user;
@@ -77,12 +93,9 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 		return userSession;
 	}
 
-	public UserSession updateUserSession(UserSession userSession) {
-		updateObject(userSession);
-		return userSession;
-	}
 
-	public UserSession getSessionssion(String authToken) {
+
+	public UserSession getSessionssionByAuthTok(String authToken) {
 		UserSession userSession = null;
 		try {
 			userSession = (UserSession) getSession().createCriteria(UserSession.class)
@@ -92,63 +105,12 @@ public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 		}
 		return userSession;
 	}
-	public UserSession getSessionssion(long userId, String gcmIdentifier) {
-		UserSession userSession = null;
-		try {			
-			Criteria criteria = getSession().createCriteria(UserSession.class);
-			criteria.add(Restrictions.eq("gcmIdentifierId", gcmIdentifier));
-			criteria.add(Restrictions.eq("userId", userId));
-			userSession = (UserSession)criteria.list().get(0);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return userSession;
-	}
+	
+	public boolean deleteUser(User user) {
+
 		
-/*	public User createOrUpdateUser(UserDto userDto){
-		//getHibernateTemplate().flush();
-		User user = new User();
-		user.setAccountId(userDto.getAccountId());
-		user.setAccountType(userDto.getAccountType());
-		user.setUserId(userDto.getId());
-		if (userDto.isActFlag())
-			user.setActFlag('Y');
-		else 
-			user.setActFlag('N');
-		user.setCreatedDate(new Date());
-		user.setOtp(userDto.getOtp());
-		user.setOtpExpiryDate(new Date());
-		user.setPassword(user.getPassword());
-		if (userDto.getCategory() == null || "".equals(userDto.getCategory())) 
-			userDto.setCategory("G");
-		user.setUserCategory(userDto.getCategory());
-		user.setUserEmail(userDto.getEmail());
-		user.setUserMobile(userDto.getMobile());
-		user.setUserName(userDto.getName());
-		saveOrUpdateObject(user);
-		return user;
+		getSession().delete(user);
+		getSession().flush();
+		return true;
 	}
-	public User updateUser(UserDto userDto) {
-		User user = new User();
-		user.setAccountId(userDto.getAccountId());
-		user.setAccountType(userDto.getAccountType());
-		user.setUserId(userDto.getId());
-		if (userDto.isActFlag())
-			user.setActFlag('Y');
-		else 
-			user.setActFlag('N');
-		user.setCreatedDate(new Date());
-		user.setOtp(userDto.getOtp());
-		user.setOtpExpiryDate(new Date());
-		user.setPassword(user.getPassword());
-		if (userDto.getCategory() == null || "".equals(userDto.getCategory())) 
-			userDto.setCategory("G");
-		user.setUserCategory(userDto.getCategory());
-		user.setUserEmail(userDto.getEmail());
-		user.setUserMobile(userDto.getMobile());
-		user.setUserName(userDto.getName());
-		updateObject(user);
-		return user;
-	}
-	*/
 }
