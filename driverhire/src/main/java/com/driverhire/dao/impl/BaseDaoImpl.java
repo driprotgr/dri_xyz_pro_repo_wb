@@ -25,7 +25,14 @@ public class BaseDaoImpl extends HibernateDaoSupport implements BaseDao {
 	public void saveOrUpdateObject(Object obj) {
 		getHibernateTemplate().saveOrUpdate(obj);
 	}
-
+	public void createObject(Object obj) {
+		
+	}
+	
+	public void updateObject(Object obj) {
+		getHibernateTemplate().update(obj);
+	}
+	
 	public void deleteObject(Class c, Serializable id) {
 		getSession().delete(getObject(c, id));
 	}

@@ -36,23 +36,27 @@ public class UserService {
 		if(newUser.getAccountId() == null || newUser.getAccountType() != AccountType.MOBILE.getValue()) {
 			throw new DriverHireException(803, "Invalid request, accountId is null or Account Type in not Mobile");	
 		}
-		User dbUser = userDao.getValidUserByAccountId(newUser.getAccountId());
-		if(dbUser != null)
+		//User dbUser = userDao.getValidUserByAccountId(newUser.getAccountId());
+		User dbUser = userDao.getUserByAccountId(newUser.getAccountId());
+		if(dbUser != null && dbUser.getActFlag() == 'Y')
 		{
 			throw new DriverHireException(803, "User Already Exists");
 		}
 		
 		//delete existing invalid record
-		
-		dbUser = userDao.getUserByAccountId(newUser.getAccountId());
+		//------------no need to delete record update the existing
+		/*
 		if(dbUser != null)
 		{
 			boolean isDeleted = userDao.deleteUser(dbUser);
 			logger.info("isDeleted:" + isDeleted);
-		}
+		}*/
 		
 		
 		//generate OTP
+		if (dbUser == null)
+			dbUser = new User();
+		
 		String otp = sendOtp(newUser.getAccountId()!= null? newUser.getAccountId() : newUser.getMobile());
 		newUser.setOtp(otp);
 		
@@ -63,7 +67,9 @@ public class UserService {
 				newUser.setName(newUser.getAccountId());
 		if(newUser.getMobile() == null || "".equals(newUser.getMobile()))
 			newUser.setMobile(newUser.getAccountId());
-		dbUser = userDao.createOrUpdateUser(newUser);
+		setModelFromDto(newUser, dbUser);
+	//	dbUser = userDao.createOrUpdateUser(newUser); ///update is getting called here even record deleted
+		dbUser = userDao.createOrUpdateUser(dbUser);
 		//Send SMS to user
 		
 		newUser = modelToDTO(dbUser);
@@ -97,31 +103,20 @@ public class UserService {
 		} else {
 			logger.info("F or G login type");
 			if(dbUser == null) {
+				dbUser = new User();
 				user.setActFlag(true);
 				if(user.getCategory() == null || "".equals(user.getCategory())) {
 					//throw new DriverHireException(803, "Column 'USER_CATEGORY' cannot be null");
 					user.setCategory("G");
 				}
-				
-				dbUser = userDao.createOrUpdateUser(user);
+				setModelFromDto(user, dbUser);
+				dbUser = userDao.createOrUpdateUser(dbUser);
 				response.setResponseMessage("NEW_USER");
 			}
 		}
-		
-		UserSession userSession = new UserSession();
-		userSession.setUserId(dbUser.getUserId());
-		if(user.getGcmIdentifierId() == null || "".equals(user.getGcmIdentifierId()))
-			user.setGcmIdentifierId("WEB");
-		userSession.setGcmIdentifierId(user.getGcmIdentifierId());
-		
-		String authToken = Token.generateToken(64);
-		userSession.setAuthId(authToken);
-		
-		userSession.setCreatedTime(new Date());
-		userDao.saveUserSession(userSession);
-		
+		UserSession userSession= createUserSession(dbUser.getUserId(), user.getGcmIdentifierId());
 		userDto = modelToDTO(dbUser);
-		userDto.setAuthToken(authToken);
+		userDto.setAuthToken(userSession.getAuthId());
 		response.setResponseBody(userDto);
 		response.setAuthToken(userDto.getAuthToken());
 		return response;
@@ -129,7 +124,7 @@ public class UserService {
 	}
 	
 	public boolean isSeqAuthValid(String seqAuth) {
-	 	UserSession userSession = userDao.getSessionssionByAuthTok(seqAuth);
+	 	UserSession userSession = userDao.getSessionssion(seqAuth);
 	 	if(userSession == null) {
 	 		return false;
 	 	}
@@ -154,80 +149,75 @@ public class UserService {
 				}
 			}*/
 			
-			UserSession userSession = new UserSession();
-			userSession.setUserId(user.getUserId());
+			UserSession userSession = createUserSession(user.getUserId(), gcmIdentifier);
+			/*userSession.setUserId(user.getUserId());
 			userSession.setGcmIdentifierId(gcmIdentifier);
 			
 			String authToken = Token.generateToken(64);
 			userSession.setAuthId(authToken);
 			
-			userSession.setCreatedTime(new Date());
+			userSession.setCreatedTime(new Date());*/
 			userDao.saveUserSession(userSession);
 			
 			UserDto userDto = modelToDTO(user);
-			userDto.setAuthToken(authToken);
+			userDto.setAuthToken(userSession.getAuthId());
 			return userDto;
 		} else {
 			throw new DriverHireException(801, "Invalid login Details");
 		}
 	}
-	public UserDto confirmOtp(String accountId, String otp) throws DriverHireException{
+	public User confirmOtp(String accountId, String otp) throws DriverHireException{
 		
 		User user = userDao.getUserByAccountId(accountId);
 		if(user == null) {
 			throw new DriverHireException(810, "Account does not exists");
 		}
 		if(user.getOtp() != null &&  user.getOtp().equals(otp))
-			return modelToDTO(user);
+			return user;
 		else
 			return null;
 	}
 	public UserDto confirmSignupOtp(UserDto user) throws DriverHireException{
-		UserDto dbUser  = confirmOtp(user.getAccountId(), user.getOtp());
-		 User mUser = null;
+		logger.info("inside confirmSignupOtp");
+		User dbUser  = confirmOtp(user.getAccountId(), user.getOtp());
+		 //User mUser = null;
 		if(dbUser != null) {
-			dbUser.setActFlag(true);
+			dbUser.setActFlag('Y'); 
 			dbUser.setOtp(null);
-			mUser = userDao.createOrUpdateUser(dbUser);	
+			//mUser = userDao.createOrUpdateUser(dbUser);
 			
-			UserSession userSession = new UserSession();
-			userSession.setUserId(mUser.getUserId());
-			userSession.setGcmIdentifierId(user.getGcmIdentifierId());
+			logger.info("Updating user details" + dbUser.toString());
+			dbUser = userDao.updateUser(dbUser);
 			
-			String authToken = Token.generateToken(64);
-			userSession.setAuthId(authToken);
+			UserSession userSession = createUserSession(dbUser.getUserId(), user.getGcmIdentifierId());
 			
-			userSession.setCreatedTime(new Date());
-			userDao.saveUserSession(userSession);
-			
-			UserDto userDto = modelToDTO(mUser);
-			userDto.setAuthToken(authToken);
+			UserDto userDto = modelToDTO(dbUser);
+			userDto.setAuthToken(userSession.getAuthId());
 		} else {
 			throw new DriverHireException(805, "OTP doesnt matched");
 		}
-		return modelToDTO(mUser);
+		return modelToDTO(dbUser);
 	}
 	
 	public UserDto changePassword(UserDto user) throws DriverHireException {
 		if(user.getAccountType() != AccountType.MOBILE.getValue())
 			throw new DriverHireException(811, "Invalid Account Type");
-		UserDto dbUser;
+		User dbUser;
 		if(user.getAccountId() != null && "".equals(user.getAccountId()))
 			dbUser = confirmOtp(user.getAccountId(), user.getOtp());
 		else
 			dbUser = confirmOtp(user.getMobile(), user.getOtp());
-		User mUser = null;
 		if(dbUser != null) {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			//logger.info("encoded Password" + passwordEncoder.encode(password));
 			dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
 			dbUser.setOtp(null);
-			mUser = userDao.createOrUpdateUser(dbUser);
+			dbUser = userDao.createOrUpdateUser(dbUser);
 		}
 		else {
 			throw new DriverHireException(805, "OTP doesnt matched");
 		}
-		return modelToDTO(mUser);
+		return modelToDTO(dbUser);
 	}
 	
 	public UserDto resendOtp (UserDto user) throws DriverHireException{
@@ -241,12 +231,14 @@ public class UserService {
 			throw new DriverHireException(810, "Account does not exists");
 		}
 		String otp = sendOtp(mUser.getAccountId());
+		
 		mUser.setOtp(otp);
 		userDao.createOrUpdateUser(mUser);
 		return modelToDTO(mUser);
 	}
 	
 	public UserDto updateUser(UserDto user) throws DriverHireException {
+		logger.info("inside update");
 		User mUser = userDao.getUserByAccountId(user.getAccountId());
 		if(mUser == null) {
 			throw new DriverHireException(810, "Account does not exists");
@@ -255,6 +247,7 @@ public class UserService {
 		mUser.setUserName(user.getName());
 		mUser.setUserEmail(user.getEmail());
 		mUser.setUserCategory(user.getCategory());
+		mUser.setUserMobile(user.getMobile());
 		mUser = userDao.createOrUpdateUser(mUser);
 		return modelToDTO(mUser);
 	}
@@ -275,7 +268,7 @@ public class UserService {
 		
 		userDto.setAccountId(user.getAccountId());
 		userDto.setAccountType(user.getAccountType());
-		if(user.getActFlag() == '0')
+		if(user.getActFlag() == 'N')
 			userDto.setActFlag(false);
 		else 
 			userDto.setActFlag(true);
@@ -285,6 +278,46 @@ public class UserService {
 		userDto.setMobile(user.getUserMobile());
 		userDto.setName(user.getUserName());
 		
+		logger.info(userDto.toString());
 		return userDto;
+	}
+	
+	// this method change the User object
+	private void setModelFromDto(UserDto userDto, User user) {
+		user.setAccountId(userDto.getAccountId());
+		user.setAccountType(userDto.getAccountType());
+		//user.setUserId(userDto.getId());
+		if (userDto.isActFlag())
+			user.setActFlag('Y');
+		else 
+			user.setActFlag('N');
+		user.setCreatedDate(new Date());
+		user.setOtp(userDto.getOtp());
+		user.setOtpExpiryDate(new Date());
+		user.setPassword(user.getPassword());
+		if (userDto.getCategory() == null || "".equals(userDto.getCategory())) 
+			userDto.setCategory("G");
+		user.setUserCategory(userDto.getCategory());
+		user.setUserEmail(userDto.getEmail());
+		user.setUserMobile(userDto.getMobile());
+		user.setUserName(userDto.getName());
+	}
+	
+	private UserSession createUserSession(long userId, String gcmIdentifier) {
+		UserSession userSession = userDao.getSessionssion(userId, gcmIdentifier);
+		//UserSession userSession = new UserSession();
+		if( userSession == null)
+			userSession= new UserSession();
+		userSession.setUserId(userId);
+		if(gcmIdentifier == null || "".equals(gcmIdentifier))
+			gcmIdentifier = "WEB";
+		userSession.setGcmIdentifierId(gcmIdentifier);
+		
+		String authToken = Token.generateToken(64);
+		userSession.setAuthId(authToken);
+		
+		userSession.setCreatedTime(new Date());
+		userSession = userDao.saveUserSession(userSession);
+		return userSession;
 	}
 }
